@@ -13,44 +13,61 @@ namespace dagomez {
 using complex_d = std::complex<double>;
 using complex_vector = std::vector<complex_d>;
 
-complex_vector fft(complex_vector v) {
-  size_t n = v.size();
-  if (n <= 1) return v;
-
-  complex_vector even(n / 2);
-  complex_vector odd(n / 2);
-  for (size_t i = 0; i < n; i++) {
-    if (i & 1) {
-      odd[i / 2] = v[i];
-    } else {
-      even[i / 2] = v[i];
-    }
+int reverse(int x, int num_bits) {
+  int ans = 0;
+  for (int i = 0; i < num_bits; i++) {
+    ans = (ans << 1) | (x & 1);
+    x >>= 1;
   }
 
-  const complex_vector y_even = fft(std::move(even));
-  const complex_vector y_odd = fft(std::move(odd));
+  return ans;
+}
 
-  const complex_d wn = std::polar(1.0, 2.0 * M_PI / double(n));
-  complex_d w = 1;
+int calculate_num_bits(int x) {
+  int ans = 0;
+  while (x) {
+    ans++;
+    x >>= 1;
+  }
 
+  return ans - 1;
+}
+
+complex_vector fft(complex_vector v, bool inverse = false) {
+  const size_t n = v.size();
+  const int num_bits = calculate_num_bits(n);
   complex_vector y(n);
-  for (size_t i = 0; i < n / 2; i++) {
-    y[i] = y_even[i] + w * y_odd[i];
-    y[i + n / 2] = y_even[i] - w * y_odd[i];
-    w *= wn;
+  for (size_t i = 0; i < n; i++) {
+    y[reverse(i, num_bits)] = v[i];
+  }
+
+  for (size_t p = 1; p < n; p <<= 1) {
+    const double sign = inverse ? -1.0 : 1.0;
+    const complex_d wn = std::polar(1.0, sign * 2.0 * M_PI / double(2 * p));
+
+    for (size_t i = 0; i < n; i += 2 * p) {
+      complex_d w = 1;
+      for (size_t j = 0; j < p; j++) {
+        complex_d even = y[i + j];
+        complex_d odd = y[i + j + p];
+        y[i + j] = even + w * odd;
+        y[i + j + p] = even - w * odd;
+
+        w *= wn;
+      }
+    }
   }
 
   return y;
 }
 
 complex_vector inverse_fft(complex_vector v) {
-  for (auto& e : v) e = conj(e);
-  v = fft(move(v));
-  for (auto& e : v) e = conj(e);
-  for (auto& e : v) e /= double(v.size());
+  v = fft(std::move(v), /*inverse=*/true);
+  for (auto &e : v)
+    e /= double(v.size());
   return v;
 }
-}
+} // namespace dagomez
 
 int next_power_of_two(int n) {
   int p = 1;

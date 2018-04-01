@@ -13,8 +13,7 @@
  
 using namespace std;
  
-using d_type = double;
-using complex_d = complex<d_type>;
+using complex_d = complex<double>;
 using complex_vector = vector<complex_d>;
  
 complex_vector fft(complex_vector v) {
@@ -33,8 +32,8 @@ complex_vector fft(complex_vector v) {
  
   const complex_vector y_even = fft(move(even));
   const complex_vector y_odd = fft(move(odd));
- 
-  complex_d wn = polar(d_type(1.0), 2.0 * M_PI / d_type(n));
+
+  const complex_d wn = polar(1.0, /*theta=*/2.0 * M_PI / double(n));
   complex_d w = 1;
  
   complex_vector y(n);
@@ -43,7 +42,7 @@ complex_vector fft(complex_vector v) {
     y[i + n / 2] = y_even[i] - w * y_odd[i];
     w *= wn;
   }
- 
+
   return y;
 }
  
@@ -60,7 +59,7 @@ complex_vector string_to_vector(string s) {
   complex_vector ans;
   ans.reserve(s.size());
   for (char c : s) {
-    ans.push_back({d_type(c - '0')});
+    ans.push_back({double(c - '0')});
   }
  
   return ans;
