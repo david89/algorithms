@@ -1,6 +1,8 @@
 // Check http://codeforces.com/blog/entry/43499 for a very good tutorial on FFT.
 // This particular implementation corresponds to
 // http://go/wiki/Cooley%E2%80%93Tukey_FFT_algorithm.
+// Tested on:
+// * http://www.spoj.com/problems/VFMUL/
 
 #include <algorithm>
 #include <cmath>
