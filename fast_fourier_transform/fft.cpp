@@ -14,7 +14,7 @@ using complex_d = std::complex<double>;
 using complex_vector = std::vector<complex_d>;
 
 complex_vector fft(complex_vector v) {
-  size_t n = v.size();
+  const size_t n = v.size();
   if (n <= 1) return v;
 
   complex_vector even(n / 2);
@@ -45,7 +45,7 @@ complex_vector fft(complex_vector v) {
 
 complex_vector inverse_fft(complex_vector v) {
   for (auto& e : v) e = conj(e);
-  v = fft(move(v));
+  v = fft(std::move(v));
   for (auto& e : v) e = conj(e);
   for (auto& e : v) e /= double(v.size());
   return v;
