@@ -35,7 +35,7 @@ public:
       std::swap(root_x, root_y);
     }
 
-    // Now root_x is thre representative of the root_y subtree.
+    // Now root_x is the representative of the root_y subtree.
     nodes_[root_y].parent = root_x;
 
     // If we have two subtrees with the same height, then we need to increment
