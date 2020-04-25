@@ -1,7 +1,7 @@
 #ifndef STRING_MATCHING_KMP_HPP
 #define STRING_MATCHING_KMP_HPP
 
-#include <iostream>
+#include <string>
 
 namespace dagomez {
 
