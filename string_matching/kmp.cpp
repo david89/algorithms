@@ -1,32 +1,33 @@
+#include "string_matching/kmp.hpp"
+
 #include <string>
 #include <vector>
 
 namespace dagomez {
+namespace {
 
-/**
- * Calculates the length of the biggest proper prefix that is also a suffix of
- * each substring of pattern. For example:
- *
- * ABCABA:
- * "" -> -1 (we use -1 as a sentinel for the empty string case)
- * "A" -> 0
- * "AB" -> 0
- * "ABC" -> 0
- * "ABCA" -> 1
- * "ABCAB" -> 2
- * "ABCABA" -> 1
- *
- * Note that the prefix and suffix may overlap. For example:
- * 
- * ABABAC
- * "" -> -1
- * "A" -> 0
- * "AB" -> 0
- * "ABA" -> 1
- * "ABAB" -> 2
- * "ABABA" -> 3
- * "ABABAC" -> 0
- */
+// Calculates the length of the biggest proper prefix that is also a suffix of
+// each substring of pattern. For example:
+// 
+// ABCABA:
+// "" -> -1 (we use -1 as a sentinel for the empty string case)
+// "A" -> 0
+// "AB" -> 0
+// "ABC" -> 0
+// "ABCA" -> 1
+// "ABCAB" -> 2
+// "ABCABA" -> 1
+// 
+// Note that the prefix and suffix may overlap. For example:
+// 
+// ABABAC
+// "" -> -1
+// "A" -> 0
+// "AB" -> 0
+// "ABA" -> 1
+// "ABAB" -> 2
+// "ABABA" -> 3
+// "ABABAC" -> 0
 std::vector<int> failure_function(const std::string& pattern) {
   std::vector<int> v(pattern.size() + 1, 0);
   v[0] = -1;
@@ -43,6 +44,7 @@ std::vector<int> failure_function(const std::string& pattern) {
 
   return v;
 }
+}  // namespace
 
 size_t find(const std::string& text, const std::string& pattern) {
   const std::vector<int> failure = failure_function(pattern);
@@ -66,16 +68,4 @@ size_t find(const std::string& text, const std::string& pattern) {
 
   return std::string::npos;
 }
-
 }  // namespace dagomez
-
-#include <iostream>
-using namespace std;
-
-int main() {
-  cout << dagomez::find("this is my text", "fail") << endl;
-  cout << dagomez::find("this is my text", "text") << endl;
-  cout << dagomez::find("this is my text", "this") << endl;
-  cout << dagomez::find("this is my text", "my") << endl;
-  return 0;
-}
